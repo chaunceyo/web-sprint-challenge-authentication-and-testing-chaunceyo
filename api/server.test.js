@@ -25,11 +25,11 @@ describe('[POST] "/auth/register"', () => {
   })
 })
 describe('[POST] "/auth/login"', () => {
-  test('responds with 201 status code',  async () => {
+  test('responds with 200 status code',  async () => {
       const user = {username: 'fii', password: 'bar'}
       await request(server).post('/api/auth/register').send(user)
       let response = await request(server).post('/api/auth/login').send(user)
-      expect(response.status).toBe(201)
+      expect(response.status).toBe(200)
   })
   test('responds with proper welcome message',  async () => {
       const user = {username: 'fii', password: 'bar'}
