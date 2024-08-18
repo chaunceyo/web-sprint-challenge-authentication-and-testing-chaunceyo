@@ -1,9 +1,23 @@
-const db = require("../../data/dbConfig")
+const User = require('./auth-model')
+const bcrypt = require('bcryptjs')
 const router = require('express').Router();
-const {checkUsernameExists, checkUsernameFree, checkUsernamePassword} = require('./auth-middleware')
+const {
+  checkUsernameExists, 
+  checkUsernameFree, 
+  checkUsernamePassword,
+  buildToken,
+} = require('./auth-middleware')
 
-router.post('/register', checkUsernamePassword,(req, res) => {
-  
+router.post('/register', checkUsernamePassword, checkUsernameFree,(req, res, next) => {
+  const {username, password} = req.body
+  const hash = bcrypt.hashSync(password, 8)
+
+  User.add({username, password: hash})
+  .then(saved => {
+    res.status(201).json(saved)
+  })
+  .catch(next)
+
   /*
     IMPLEMENT
     You are welcome to build additional middlewares to help with the endpoint's functionality.
@@ -31,8 +45,17 @@ router.post('/register', checkUsernamePassword,(req, res) => {
   */
 });
 
-router.post('/login', (req, res) => {
-  res.end('implement login, please!');
+router.post('/login', checkUsernamePassword, checkUsernameExists, (req, res, next) => {
+  const {password} = req.body
+  if(bcrypt.compareSync(password, req.user.password)){
+    const token = buildToken(req.user)
+    res.status(201).json({
+      message: `welcome, ${req.user.username}`,
+      token,
+    })
+  }else{
+    next({status: 401, message: 'invalid credentials'})
+  }
   /*
     IMPLEMENT
     You are welcome to build additional middlewares to help with the endpoint's functionality.

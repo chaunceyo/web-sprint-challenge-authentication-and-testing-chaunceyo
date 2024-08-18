@@ -5,8 +5,9 @@
   "scripts": {
     "start": "node index.js",
     "server": "nodemon index.js",
+    "rollback": "knex migrate:rollback",
     "migrate": "knex migrate:latest",
-    "test": "cross-env NODE_ENV=testing jest --verbose --runInBand --silent"
+    "test": "cross-env NODE_ENV=testing jest --verbose --runInBand --watchAll --silent"
   },
   "repository": {
     "type": "git",
@@ -23,7 +24,7 @@
     "sqlite3": "5.0.8"
   },
   "devDependencies": {
-    "@types/jest": "27.5.0",
+    "@types/jest": "^27.5.0",
     "cross-env": "7.0.3",
     "eslint": "8.14.0",
     "jest": "28.1.0",
